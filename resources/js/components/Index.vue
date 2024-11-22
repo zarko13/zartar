@@ -106,7 +106,7 @@ export default {
                 recognition.onresult = (event) => {
                     const color = event.results[0][0].transcript.toLowerCase().trim();
                     console.log(`Detected text: ${color}`);
-                    this.executeCommand(`Your command: ${color}`);
+                    this.executeCommand(color);
                 };
 
                 recognition.onerror = (event) => {
@@ -147,6 +147,7 @@ export default {
             }).then(async (response) => {
                 this.speak(response.data.message);
             }).catch((error) => {
+                console.log(error);
                 this.speak(error.response.data[0]);
             });
         },

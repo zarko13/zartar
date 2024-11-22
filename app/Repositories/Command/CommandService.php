@@ -16,21 +16,24 @@ class CommandService
         try {
 
 
-            $message = null;
+            $percentage = rand(1,100);
+            $message = $percentage === 1 ? 'ne handri me više' : null;
             Log::info($command);
-            switch ($command) {
-                case 'inspire':
-                case 'inspire.':
-                case 'inspired.':
-                case 'inspired':
-                    LOg::info('tuj');
-                    $message = self::inspire()->returnOrFail()->data['message'];
-                    LOg::info($message);
-                    break;
+            if(!$message){
+                switch ($command) {
+                    case 'inspire':
+                    case 'inspire.':
+                    case 'inspired.':
+                    case 'inspired':
+                    case 'inspire me':
+                    case 'inspire me please':
+                        $message = self::inspire()->returnOrFail()->data['message'];
+                        break;
 
-                default:
-                    # code...
-                    break;
+                    default:
+                        # code...
+                        break;
+                }
             }
 
             $data['message'] = $message ? $message : 'Dave odvadi malo';

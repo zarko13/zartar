@@ -64,4 +64,31 @@ class CommandService
         return new ServiceResponse($errors, $data);
 
     }
+
+
+
+    public static function checkIsFedUp(){
+
+        $errors = null;
+        $data = [];
+        try {
+
+
+            
+
+
+            $isFedUp = rand(1, 10) == 1;
+
+
+            $data['speak_message'] = $isFedUp;
+            $data['text_message'] = $isFedUp;
+
+        } catch (Exception $error){
+            Log::error('Failed to check is fed up.Error:'.$error);
+            $errors[] = 'Failed to check is fed up';
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
 }

@@ -145,6 +145,7 @@ export default {
                     command
                 },
             }).then(async (response) => {
+                console.log('mess' ,response.data.message)
                 this.speak(response.data.message);
             }).catch((error) => {
                 console.log(error);

@@ -134,23 +134,26 @@ export default {
         },
         executeCommand: async function (command) {
             this.state = 'processing';
-            try {
-                const response = await axios.post('/async/execute-command', {
-                    message: command,
-                });
+            await  axios({
+                url: '/async/execute-command',
+                method : 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': window.csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                data: {
+                    command
+                },
+            }).then(async (response) => {
                 this.speak(response.data.message);
-            } catch (error) {
-                this.speak(error.message);
-            }
+            }).catch((error) => {
+                this.speak(error.response.data[0]);
+            });
         },
     },
     watch: {
         state: function () {
-            if (this.state === 'listening') {
-                this.startRecognition();
-            } else {
-                this.stopRecognition();
-            }
+            this.state === 'listening' ? this.startRecognition() : this.stopRecognition();
         },
     },
 };

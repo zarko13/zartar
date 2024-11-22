@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Repositories\Command\CommandService;
 use Illuminate\Support\Facades\Log;
 
 class ExecuteCommandRequest extends BaseAsyncRequest
@@ -27,7 +28,7 @@ class ExecuteCommandRequest extends BaseAsyncRequest
         return [
             'command' => ['required', function ($attribute, $value, $fail) {
                     if (preg_match('/\*+/', $value)) {
-                        $fail('Fuck you too.');
+                        $fail(CommandService::getRandomMessage('profanity')->returnOrFail()->data['message']);
                     }
                 },
             ]

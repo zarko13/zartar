@@ -25,7 +25,14 @@ class CommandService
                     case 'inspired.':
                     case 'inspired':
                     case 'inspire me':
+                    case 'inspire me.':
                     case 'inspire me please':
+                    case 'inspire me please.':
+                        $inspireResponse  = self::inspire()->returnOrFail();
+                        $speakMessage = $inspireResponse->data['speak_message'];
+                        $textMessage = $inspireResponse->data['text_message'];
+                        break;
+                    case 'what is your name':
                         $inspireResponse  = self::inspire()->returnOrFail();
                         $speakMessage = $inspireResponse->data['speak_message'];
                         $textMessage = $inspireResponse->data['text_message'];
@@ -82,7 +89,7 @@ class CommandService
         $data = [];
         try {
 
-            $message = rand(1, 10) == 1 ? self::getRandomMessage('fed_up') : null;
+            $message = rand(1, 10) == 1 ? self::getRandomMessage('fed_up')->data['message'] : null;
 
             $data['speak_message'] = $message;
             $data['text_message'] = $message;
@@ -105,7 +112,7 @@ class CommandService
         try {
 
 
-            $data['message'] = config('messages')[$type][rand(0, config('messages')[$type] - 1)];
+            $data['message'] = config('messages')[$type][rand(0, count(config('messages')[$type]) - 1)];
 
         } catch (Exception $error){
             Log::error('Failed to get random message.Error:'.$error);

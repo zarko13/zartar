@@ -1,22 +1,19 @@
 <template>
     <div class="panel">
         <div class="nameplate">ZarTar</div>
-        <div v-if="permissionsChecked" class="base">
+        <div v-if="permissionsChecked" class="baae">
             <div class="lens">
                 <div class="reflections"></div>
             </div>
             <div class="animation"></div>
         </div>
         <span class="output"></span>
-        <div v-on:click="test()" class="speaker flex">
-            <span class="speaker-no-permissions" v-if="permissionsChecked && !hasPermission">
+        <div class="speaker flex">
+            <span class="speaker-no-permissions" v-if="permissionsChecked && !hasPermission" onmousedown="startRecognition()" onmouseup="stopRecognition()" onmouseleave="stopRecognition()">
                 I'm sorry, Dave. I'm afraid I can't do that.
             </span>
         </div>
         <span class="output">{{ diagnostic }}</span>
-        <button type="button" v-on:click="test" class="listen-button">
-                    Hold to Speak
-        </button>
     </div>
 </template>
 
@@ -37,9 +34,9 @@ export default {
         this.diagnostic = document.querySelector(".output");
         this.bg = document.querySelector("html");
 
-        await this.checkPermissions();
+        this.checkPermissions();
 
-        await this.initializeSpeechRecognition();
+        this.initializeSpeechRecognition();
 
         // this.button = document.querySelector('.listen-button');
         // this.button.addEventListener('mousedown', this.startRecognition);
@@ -124,8 +121,7 @@ export default {
         },
 
         test: function(){
-            console.log('dsadad');
-            alett('aaaaa');
+            console.log('assasasas');
         },
     },
 };

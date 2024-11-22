@@ -26,7 +26,7 @@ class ExecuteCommandRequest extends BaseAsyncRequest
     public function rules(): array{
         return [
             'command' => ['required', function ($attribute, $value, $fail) {
-                    if (preg_match('/\b\*+\b/', $value)) {
+                    if (preg_match('/\*+/', $value)) {
                         $fail('Fuck you too.');
                     }
                 },

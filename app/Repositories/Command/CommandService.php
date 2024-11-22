@@ -20,6 +20,9 @@ class CommandService
             Log::info($command);
             switch ($command) {
                 case 'inspire':
+                case 'inspire.':
+                case 'inspired.':
+                case 'inspired':
                     LOg::info('tuj');
                     $message = self::inspire()->returnOrFail()->data['message'];
                     LOg::info($message);

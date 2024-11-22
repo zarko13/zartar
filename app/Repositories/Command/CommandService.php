@@ -17,10 +17,12 @@ class CommandService
 
 
             $message = null;
-
+            Log::info($command);
             switch ($command) {
                 case 'inspire':
+                    LOg::info('tuj');
                     $message = self::inspire()->returnOrFail()->data['message'];
+                    LOg::info($message);
                     break;
 
                 default:
@@ -46,7 +48,7 @@ class CommandService
         $data = [];
         try {
 
-            $data['message'] = Process::run('php artisan inspire')->output();
+            $data['message'] = shell_exec('cd ' . base_path() . ' && php artisan inspire');
 
         } catch (Exception $error){
             Log::error('Failed to execute inspire.Error:'.$error);

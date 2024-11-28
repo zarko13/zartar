@@ -4,7 +4,7 @@
 
 
 .loading-spinner {
- 
+
     display: block;
     width: 25px;
     height: 25px;
@@ -15,7 +15,7 @@
     -webkit-animation: spinWCMig 1s ease-in-out infinite;
     margin-left: auto;
     margin-right: auto;
-  
+
 }
 
 body {
@@ -35,9 +35,8 @@ body {
     z-index: 10000;
   }
 }
-  
+
 div {
-  border-radius: 100%;
   box-sizing: border-box;
   position: relative;
 
@@ -51,116 +50,114 @@ div {
     height: 100%;
   }
 }
-  
+
 .panel {
   background: linear-gradient(90deg, #1f2344,#94a4ba, #404974, #94a4ba , #c2cad4);
-  
   border-radius: 0;
   margin: 0 auto;
   padding: 7px;
   width: 322px;
   height: 985px;
   z-index: 1;
-  
+
   &::before {
     background: linear-gradient(#53658c,#0f1029,#52638a);
-    
+
     width: 308px;
     height: 971px;
   }
-  
+
   &::after {
     background: radial-gradient(ellipse,#13142d,#08081a);
     box-shadow: inset 0 0 80px #0b0a1f;
-    
+
     top: 12px;
     left: 12px;
     width: 298px;
     height: 961px;
   }
 }
-  
+
 .nameplate {
   background: linear-gradient(90deg, #0094ce 57%,transparent 43%);
   border: 1px solid #0094ce;
   border-radius: 0;
-  
+
   color: #fff;
   font-size: 41px;
   font-family: 'Fjalla One',sans-serif;
   line-height: 56px;
   text-align: center;
   text-indent: 0.85em;
-  
+
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #fff;
-  
+
   top: 25px;
   left: 25px;
   width: 255px;
   height: 56px;
   z-index: 100;
 }
-  
+
 .speaker {
   background-color: #0f122a;
-  background-image: 
+  background-image:
     linear-gradient(rgba(#e9ecf0,0.4),rgba(#12142c,0.4)),
-    
+
     radial-gradient(#0d0f23 40%, transparent 40%),
     radial-gradient(#13142d 40%,transparent 41%);
   background-size: 100% 100%, 12px 12px, 12px 12px;
   background-position: 0 0,0 0, 0 2px;
   background-blend-mode: overlay, normal, normal;
-  
+
   border-radius: 0;
   box-shadow: inset 0 0 13px #0b0a1f;
-  
+
   width: 298px;
   height: 205px;
   position: absolute;
     bottom: 11px;
     left: 13px;
   z-index: 10;
-  
+
   &::before,
   &::after {
     width: 308px;
     height: 5px;
     left: -6px;
   }
-  
+
   &::before {
     background: linear-gradient(90deg,#353f60,#c2cad4,#343e5f);
   }
-  
+
   &::after {
     border: 5px solid transparent;
     border-top-color: #1c2242;
     top: 5px;
   }
 }
-  
+
 .base {
   background-image: linear-gradient(45deg,#fefefe 10%,#5d6d94,#050718,#5d6d94,#fefefe 90%);
-  
   height: 260px;
   width: 260px;
   padding: 10px;
-  
+  border-radius: 100%;
   position: absolute;
     bottom: 295px;
     left: 33px;
   z-index: 10;
-  
+
   &::before {
     background-image:
       linear-gradient(#d9dee5,#151531),
       linear-gradient(90deg, #434c77,#0b0a1f,#434c77);
     background-blend-mode: hard-light, normal;
     box-shadow: inset 0 0 14px 9px rgba(#050718,0.40);
-    
+
     width: 240px;
     height: 240px;
   }
@@ -168,20 +165,20 @@ div {
   &::after {
     background-image: radial-gradient(#b10000 10%,rgba(#b10000,0) 71%);
     mix-blend-mode: lighten;
-    
+
     top: -8px;
     left: -10px;
     width: 280px;
     height: 280px;
   }
 }
-  
+
 .lens {
   background-image: radial-gradient(#b10000 12%,#120619 67%,#200517);
-  
+  border-radius: 100%;
   border: 8px solid #050718;
   box-shadow: inset 0 0 0 10px #380014;
-  
+
   top: 12px;
   left: 12px;
   width: 213px;
@@ -192,7 +189,7 @@ div {
     background-image: radial-gradient(#f00 20%, #470010 50%, #1a193e 80%);
     mix-blend-mode: soft-light;
     opacity: 0.8;
-    
+
     z-index: 100;
   }
 
@@ -201,38 +198,38 @@ div {
     z-index: 100;
   }
 }
-  
-$gradient: 
-  radial-gradient( 
+
+$gradient:
+  radial-gradient(
     transparent 19%, #ec32aa 23%, #d4f6fc 28%, #ec32aa 33%,
     transparent 36%, transparent 38%, #e558d0 40%, #d0fcfe 45%, #ce73df 50%,
     transparent 52%, transparent 56%, #b883e7 60%, #b7ffff 65%,#3564c7 72%,
     transparent);
-  
+
 .reflections,
 .reflections::before,
 .reflections::after {
   background-image: $gradient;
   background-size: 182px 182px;
   background-position: top center;
-  
+
   border-radius: 15px 15px 5px 5px / 5px 5px 15px 15px;
-    
+
   filter: blur(4px);
-  
+
   position: absolute;
   top: 26px;
   width: 58px;
   height: 75px;
   z-index: 10;
 }
-  
+
 .reflections {
   left: 69px;
-  
+
   transform: perspective(30px) rotate3d(1,0,0,-15deg);
   transform-origin: top;
-  
+
   &::before,
   &::after {
     height: 45px;
@@ -251,13 +248,13 @@ $gradient:
     transform: rotate(43deg);
   }
 }
-  
+
 .animation {
   animation: flicker 3s infinite;
   background: radial-gradient(#79b4ba,#47696d,#890000);
   mix-blend-mode: color-dodge;
   opacity: 0;
-  
+  border-radius: 100%;
   position: absolute;
     top: 0;
     left: 0;
@@ -265,16 +262,16 @@ $gradient:
   height: 100%;
   z-index: 1000;
 }
-  
+
 @keyframes flicker {
   0% {
     opacity: 0;
   }
-  
+
   15% {
     opacity: 1;
   }
-  
+
   75% {
     opacity: 0;
   }

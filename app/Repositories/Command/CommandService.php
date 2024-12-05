@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Command;
 
+use App\Enum\Command;
 use App\Repositories\ServiceResponse;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -19,31 +20,35 @@ class CommandService
             $speakMessage = $fedUpResponse->data['speak_message'];
             $textMessage = $fedUpResponse->data['text_message'];
             if(!$speakMessage || !$textMessage){
-                switch ($command) {
-                    case 'inspire':
-                    case 'inspire.':
-                    case 'inspired.':
-                    case 'inspired':
-                    case 'inspire me':
-                    case 'inspire me.':
-                    case 'inspire me please':
-                    case 'inspire me please.':
-                        $inspireResponse  = self::inspire()->returnOrFail();
-                        $speakMessage = $inspireResponse->data['speak_message'];
-                        $textMessage = $inspireResponse->data['text_message'];
-                        break;
-                    case 'what is your name':
-                        $inspireResponse  = self::inspire()->returnOrFail();
-                        $speakMessage = $inspireResponse->data['speak_message'];
-                        $textMessage = $inspireResponse->data['text_message'];
-                        break;
 
-                    default:
-                        $message  = self::getRandomMessage('unknown_command')->returnOrFail()->data['message'];
-                        $speakMessage = $message;
-                        $textMessage = $message;
-                        break;
-                }
+                $mostSimilar = self::calculateSimilarities($command)->returnOrFail()->data['most_similar'];
+                $speakMessage = $mostSimilar->value;
+                $textMessage = $mostSimilar->value;
+                // switch ($command) {
+                //     case 'inspire':
+                //     case 'inspire.':
+                //     case 'inspired.':
+                //     case 'inspired':
+                //     case 'inspire me':
+                //     case 'inspire me.':
+                //     case 'inspire me please':
+                //     case 'inspire me please.':
+                //         $inspireResponse  = self::inspire()->returnOrFail();
+                //         $speakMessage = $inspireResponse->data['speak_message'];
+                //         $textMessage = $inspireResponse->data['text_message'];
+                //         break;
+                //     case 'what is your name':
+                //         $inspireResponse  = self::inspire()->returnOrFail();
+                //         $speakMessage = $inspireResponse->data['speak_message'];
+                //         $textMessage = $inspireResponse->data['text_message'];
+                //         break;
+
+                //     default:
+                //         $message  = self::getRandomMessage('unknown_command')->returnOrFail()->data['message'];
+                //         $speakMessage = $message;
+                //         $textMessage = $message;
+                //         break;
+                // }
             }
 
 
@@ -122,4 +127,50 @@ class CommandService
         return new ServiceResponse($errors, $data);
 
     }
+
+
+    public static function calculateSimilarities($userCommand){
+
+        $errors = null;
+        $data = [];
+        $mostSimilar = null;
+        $mostSimilarPercentage = 0;
+
+
+        try {
+
+            $userCommandParts = explode(' ', $userCommand);
+            $similarities = [];
+
+            foreach (Command::cases() as $command) {
+                $commandParts = explode(' ', $command->value);
+                $intersects = array_intersect($userCommandParts, $commandParts);
+                $similarity = bcdiv(bcmul(strlen(implode('', $intersects)) , 100), strlen(implode('', $commandParts)), 2);
+                $similarities[] = [
+                    'command' => $command,
+                    'similarity' => $similarity
+                ];
+
+
+                if($similarity >= $mostSimilarPercentage){
+                    $mostSimilar = $command;
+                    $mostSimilarPercentage = $similarity;
+                }
+            }
+
+
+            $data['similarities'] = $similarities;
+            $data['most_similar'] = $mostSimilar;
+            $data['most_similar_percentage'] = $mostSimilarPercentage;
+
+        } catch (Exception $error){
+            Log::error('Failed to calculate similarities.Error:'.$error);
+            $errors[] = 'Failed to calculate similarities';
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+
 }

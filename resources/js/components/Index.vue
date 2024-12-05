@@ -9,36 +9,24 @@
                     </div>
                     <div class="animation"></div>
                 </div>
-                <span class="output"></span>
-                <div class="speaker flex">
-                    <div v-for="message in conversation">
-                        <span>{{ message.text }}</span>
-                    </div>
-                </div>
-                <span class="output">{{ diagnostic }}</span>
             </div>
         </div>
-        <div class="basis-1/2">
-
+        <div class="basis-1/2 max-h-[50px]" style="overflow: scroll;">
             <div class="flex items-start gap-2.5">
-                <img class="w-8 h-8 rounded-full" alt="Jese image">
-                <div
-                    class="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-blue-100 dark:bg-gray-700">
-                    <div class="flex items-center space-x-2 rtl:space-x-reverse">
-                        <span class="text-sm font-semibold text-gray-900 dark:text-white">Bonnie Green</span>
-                        <span class="text-sm font-normal text-gray-500 dark:text-gray-400">11:46</span>
+                <div class="flex flex-col w-full max-w-[640px] leading-1.5 p-4 border-gray-200 bg-blue-100 dark:bg-gray-700">
+                    <div v-for="message in conversation" class="flex items-center space-x-2 rtl:space-x-reverse">
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white">
+                            {{message.is_user ? 'You:' : 'ZarTar:' }}
+                            <div class="flex">
+                                <div class="bg-blue-200 text-black p-2 rounded-lg max-w-xs" :class="message.is_user ? 'justify-end' : ''">{{message.text}}
+                                </div>
+                            </div>
+                        </span>
                     </div>
-                    <p class="text-sm font-normal py-2.5 text-gray-900 dark:text-white">That's awesome. I think our
-                        users will really appreciate the improvements.</p>
-                    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Delivered</span>
                 </div>
             </div>
-
         </div>
-
     </div>
-
-
 </template>
 
 <script>
@@ -153,7 +141,7 @@ export default {
         },
         executeCommand: async function (command) {
             this.state = 'processing';
-            this.addToConversation(command, false);
+            this.addToConversation(command, true);
             await axios({
                 url: '/async/execute-command',
                 method: 'POST',

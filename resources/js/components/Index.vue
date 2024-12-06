@@ -13,7 +13,7 @@
         </div>
         <div class="basis-1/2 max-h-[50px]" style="overflow: scroll;">
             <div class="flex items-start gap-2.5">
-                <div class="flex flex-col w-full max-w-[640px] leading-1.5 p-4 border-gray-200 bg-blue-100 dark:bg-gray-700">
+                <div class="flex z-100 flex-col w-full max-w-[640px] leading-1.5 p-4 border-gray-200 bg-blue-100 dark:bg-gray-700">
                     <div v-for="message in conversation" class="flex items-center space-x-2 rtl:space-x-reverse">
                         <span class="text-sm font-semibold text-gray-900 dark:text-white">
                             {{message.is_user ? 'You:' : 'ZarTar:' }}

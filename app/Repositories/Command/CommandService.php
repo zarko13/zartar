@@ -24,6 +24,10 @@ class CommandService
                 $mostSimilar = self::calculateSimilarities($command)->returnOrFail()->data['most_similar'];
                 $speakMessage = $mostSimilar->value;
                 $textMessage = $mostSimilar->value;
+
+                if(Command::commandHasRequiredArguments($mostSimilar)){
+                    $speakMessage = Command::commandsRequiredArgument()[$mostSimilar->value][0]['label'];
+                }
                 // switch ($command) {
                 //     case 'inspire':
                 //     case 'inspire.':

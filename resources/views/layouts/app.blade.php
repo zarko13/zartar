@@ -15,7 +15,7 @@
             @vite(['resources/css/app.scss', 'resources/js/app.js'])
         @endif
     </head>
-    <body class="font-sans antialiased dark:bg-black dark:text-white/50">
+    <body class="font-sans dark:bg-black dark:text-white/50">
         <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
         <div id="zartar-vue">
             @yield('content')

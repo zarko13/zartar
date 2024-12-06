@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'minimum_similarity' => env('MINIMUM_SIMILARITY', 0.75)
+
 ];

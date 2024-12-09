@@ -176,5 +176,106 @@ class CommandService
 
     }
 
+    public static function calculateSimilaritiesAlt($userCommand){
 
+        $errors = null;
+        $data = [];
+        $mostSimilar = null;
+        $mostSimilarPercentage = 0;
+
+
+        try {
+
+
+            $expression = self::removePunctuation($userCommand)->returnOrFail()->data['expression'];
+            $chunks = self::chunkExpression($expression)->returnOrFail()->data['chunks'];
+
+
+
+            foreach (Command::cases() as $command) {
+                $commandParts = explode(' ', $command->value);
+                $intersects = array_intersect($userCommandParts, $commandParts);
+                $similarity = bcdiv(bcmul(strlen(implode('', $intersects)) , 100), strlen(implode('', $commandParts)), 2);
+                $similarities[] = [
+                    'command' => $command,
+                    'similarity' => $similarity
+                ];
+
+
+                if($similarity >= $mostSimilarPercentage){
+                    $mostSimilar = $command;
+                    $mostSimilarPercentage = $similarity;
+                }
+            }
+
+
+            $data['similarities'] = $similarities;
+            $data['most_similar'] = $mostSimilar;
+            $data['most_similar_percentage'] = $mostSimilarPercentage;
+
+        } catch (Exception $error){
+            Log::error('Failed to calculate similarities.Error:'.$error);
+            $errors[] = 'Failed to calculate similarities';
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+    public static function removePunctuation($expressions){
+
+        $errors = null;
+        $data = [];
+
+
+        try {
+
+            $data['expression'] = preg_replace("#[[:punct:]]#", "", $expressions);
+
+        } catch (Exception $error){
+            Log::error('Failed to remove punctuation.Error:'.$error);
+            $errors[] = 'Failed to remove punctuation';
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+    public static function chunkExpression($expression){
+
+        $errors = null;
+        $data = [];
+
+
+        try {
+
+            $data['chunks'] = explode(' ', $expression);
+
+        } catch (Exception $error){
+            Log::error('Failed to chunk expression.Error:'.$error);
+            $errors[] = 'Failed to chunk expression';
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+    public static function calculateExpressionsSimilarity($expression){
+
+        $errors = null;
+        $data = [];
+
+
+        try {
+
+            $data['chunks'] = explode(' ', $expression);
+
+        } catch (Exception $error){
+            Log::error('Failed to chunk expression.Error:'.$error);
+            $errors[] = 'Failed to chunk expression';
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
 }

@@ -187,15 +187,8 @@ class CommandService
         try {
 
 
-            $expression = self::removePunctuation($userCommand)->returnOrFail()->data['expression'];
-            $chunks = self::chunkExpression($expression)->returnOrFail()->data['chunks'];
-
-
-
             foreach (Command::cases() as $command) {
-                $commandParts = explode(' ', $command->value);
-                $intersects = array_intersect($userCommandParts, $commandParts);
-                $similarity = bcdiv(bcmul(strlen(implode('', $intersects)) , 100), strlen(implode('', $commandParts)), 2);
+                $similarity = self::calculateExpressionsSimilarity($userCommand, $command->value)->returnOrFail()->data['total_similarity'];
                 $similarities[] = [
                     'command' => $command,
                     'similarity' => $similarity
@@ -260,7 +253,7 @@ class CommandService
 
     }
 
-    public static function calculateExpressionsSimilarity($expression){
+    public static function calculateExpressionsSimilarity($case, $target){
 
         $errors = null;
         $data = [];
@@ -268,7 +261,41 @@ class CommandService
 
         try {
 
-            $data['chunks'] = explode(' ', $expression);
+            $cleanedCase = self::removePunctuation($case)->returnOrFail()->data['expression'];
+            $cleanedTarget = self::removePunctuation($target)->returnOrFail()->data['expression'];
+
+            $caseChunks = self::chunkExpression($cleanedCase)->returnOrFail()->data['chunks'];
+            $targetChunks = self::chunkExpression($cleanedTarget)->returnOrFail()->data['chunks'];
+
+            $totalDistance = 0;
+            $totalLength = 0;
+            $targetAnalysis = [];
+            foreach ($targetChunks as $targetChunk) {
+                $targetLength = strlen($targetChunk);
+                $totalLength = bcadd($totalLength, $targetLength);
+                $minDistance = $targetLength;
+                $closesChunk = null;
+                foreach ($caseChunks as $caseChunk) {
+                    $distance = levenshtein($caseChunk, $targetChunk);
+                    if($distance < $minDistance){
+                        $minDistance = $distance;
+                        $closesChunk = $caseChunk;
+                    }
+                }
+
+                $totalDistance = bcadd($totalDistance, $minDistance);
+                $targetAnalysis[] = [
+                    'target' => $targetChunk,
+                    'distance' => $minDistance,
+                    'case' => $closesChunk,
+                    'similarity' => bcdiv(bcmul(bcsub($targetLength, $minDistance), 100), $targetLength, 2)
+                ];
+            }
+
+            $data['target_analysis'] = $targetAnalysis;
+            $data['total_length'] = $totalLength;
+            $data['total_distance'] = $totalDistance;
+            $data['total_similarity'] = bcdiv(bcmul(bcsub($totalLength, $totalDistance), 100), $totalLength, 2);
 
         } catch (Exception $error){
             Log::error('Failed to chunk expression.Error:'.$error);

@@ -27,10 +27,10 @@ class Test extends Command
     public function handle()
     {
 
-        $input = "!please mak:e me a new model.?";
+        $input = "!please mak:e me a new ceeder.?";
 
 
-        $result = CommandService::removePunctuation($input)->returnOrFail();
+        $result = CommandService::calculateSimilaritiesAlt($input)->returnOrFail();
 
 
         dd($result);

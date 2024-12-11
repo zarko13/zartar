@@ -180,31 +180,31 @@ class CommandService
 
         $errors = null;
         $data = [];
-        $mostSimilar = null;
-        $mostSimilarPercentage = 0;
+        $didYouMeanCommands = [];
+        $exactCommand = null;
+        $currentMaxSimilarity = 0;
 
 
         try {
-
+            $didYouMeanThreshold = config('similarity.did_you_mean_threshold');
+            $exactThreshold = config('similarity.exact_threshold');
 
             foreach (Command::cases() as $command) {
                 $similarity = self::calculateExpressionsSimilarity($userCommand, $command->value)->returnOrFail()->data['total_similarity'];
-                $similarities[] = [
-                    'command' => $command,
-                    'similarity' => $similarity
-                ];
+                if($similarity >= $didYouMeanThreshold){
+                    $didYouMeanCommands[] = $command;
 
 
-                if($similarity >= $mostSimilarPercentage){
-                    $mostSimilar = $command;
-                    $mostSimilarPercentage = $similarity;
+                    if($similarity >= $exactThreshold && $similarity > $currentMaxSimilarity){
+                        $currentMaxSimilarity = $similarity;
+                        $exactCommand = $command;
+                    }
                 }
             }
 
 
-            $data['similarities'] = $similarities;
-            $data['most_similar'] = $mostSimilar;
-            $data['most_similar_percentage'] = $mostSimilarPercentage;
+            $data['exact_command'] = $exactCommand;
+            $data['did_you_mean_commands'] = $didYouMeanCommands;
 
         } catch (Exception $error){
             Log::error('Failed to calculate similarities.Error:'.$error);

@@ -202,7 +202,7 @@ class GitService
 
         try {
 
-            $result = Process::run('git pull');
+            $result = Process::run('git checkout -b ' . $branch);
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
         
         } catch (Exception $error){

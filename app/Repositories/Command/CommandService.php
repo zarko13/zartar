@@ -17,42 +17,44 @@ class CommandService
         try {
 
             $fedUpResponse = self::checkIsFedUp()->returnOrFail();
+            $isFedUp = $fedUpResponse->data['is_fed_up'];
+            if($isFedUp){
+            }
             $speakMessage = $fedUpResponse->data['speak_message'];
             $textMessage = $fedUpResponse->data['text_message'];
             if(!$speakMessage || !$textMessage){
 
-                $mostSimilar = self::calculateSimilarities($command)->returnOrFail()->data['most_similar'];
-                $speakMessage = $mostSimilar->value;
-                $textMessage = $mostSimilar->value;
+                $similarityResponse = self::calculateSimilaritiesAlt($command)->returnOrFail();
 
-                if(Command::commandHasRequiredArguments($mostSimilar)){
-                    $speakMessage = Command::commandsRequiredArgument()[$mostSimilar->value][0]['label'];
+                $exactCommand = $similarityResponse->data['exact_command'];
+                $didYouMeanCommands = $similarityResponse->data['did_you_mean_commands'];
+
+                if($didYouMeanCommands){
+                    $speakMessage = $didYouMeanCommands;
+                    $textMessage = $didYouMeanCommands;
                 }
-                // switch ($command) {
-                //     case 'inspire':
-                //     case 'inspire.':
-                //     case 'inspired.':
-                //     case 'inspired':
-                //     case 'inspire me':
-                //     case 'inspire me.':
-                //     case 'inspire me please':
-                //     case 'inspire me please.':
-                //         $inspireResponse  = self::inspire()->returnOrFail();
-                //         $speakMessage = $inspireResponse->data['speak_message'];
-                //         $textMessage = $inspireResponse->data['text_message'];
-                //         break;
-                //     case 'what is your name':
-                //         $inspireResponse  = self::inspire()->returnOrFail();
-                //         $speakMessage = $inspireResponse->data['speak_message'];
-                //         $textMessage = $inspireResponse->data['text_message'];
-                //         break;
 
-                //     default:
-                //         $message  = self::getRandomMessage('unknown_command')->returnOrFail()->data['message'];
-                //         $speakMessage = $message;
-                //         $textMessage = $message;
-                //         break;
-                // }
+                if($exactCommand){
+
+                    if(count($exactCommand->commandRequiredArguments())){
+                        $speakMessage = $exactCommand->commandRequiredArguments()[0]['label'];
+                        $textMessage = $exactCommand->commandRequiredArguments()[0]['label'];
+                    }
+
+
+                    if(!$speakMessage){
+                        switch ($command) {
+                            case 'value':
+                                # code...
+                                break;
+
+                            default:
+                                # code...
+                                break;
+                        }
+                    }
+                }
+
             }
 
 
@@ -102,6 +104,7 @@ class CommandService
 
             $data['speak_message'] = $message;
             $data['text_message'] = $message;
+            $data['is_fed_up'] = $message ? true : false;
 
         } catch (Exception $error){
             Log::error('Failed to check is fed up.Error:'.$error);
@@ -192,7 +195,7 @@ class CommandService
             foreach (Command::cases() as $command) {
                 $similarity = self::calculateExpressionsSimilarity($userCommand, $command->value)->returnOrFail()->data['total_similarity'];
                 if($similarity >= $didYouMeanThreshold){
-                    $didYouMeanCommands[] = $command;
+                    $didYouMeanCommands[] = $command->value;
 
 
                     if($similarity >= $exactThreshold && $similarity > $currentMaxSimilarity){
@@ -202,9 +205,10 @@ class CommandService
                 }
             }
 
+            $didYouMean = !$exactCommand && count($didYouMeanCommands) ? 'Did you mean one of these:' . implode(',', $didYouMeanCommands) : null;
 
             $data['exact_command'] = $exactCommand;
-            $data['did_you_mean_commands'] = $didYouMeanCommands;
+            $data['did_you_mean_commands'] = $didYouMean;
 
         } catch (Exception $error){
             Log::error('Failed to calculate similarities.Error:'.$error);

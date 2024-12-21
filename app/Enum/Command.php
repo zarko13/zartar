@@ -27,7 +27,8 @@ enum Command : string
     case GIT_APPLY = 'git apply';
     case GIT_PULL = 'git pull';
 
-    public static function commandsRequiredArgument() : array {
+
+    public static function commandsRequiredArguments() : array {
         return [
             self::MAKE_MODEL->value => [
                 [
@@ -95,25 +96,77 @@ enum Command : string
                     'label' => 'Please specify the command name'
                 ],
             ],
+
+            self::GIT_PUSH->value => [],
+
+            self::GIT_ADD->value => [],
+
+            self::GIT_COMMIT->value => [
+                [
+                    'key' => 'commit_message',
+                    'label' => 'Please specify the commit message'
+                ],
+            ],
+
+            self::GIT_RESET->value => [],
+
+            self::GIT_STASH->value => [],
+
+            self::GIT_APPLY->value => [],
+
+            self::GIT_PULL->value => [],
         ];
     }
 
-    public static function commandHasRequiredArguments($enum): bool {
-        $required = [
-            self::MAKE_MODEL,
-            self::MAKE_MIGRATION,
-            self::MAKE_SEEDER,
-            self::MAKE_FACTORY,
-            self::MAKE_COMMAND,
-            self::MAKE_REQUEST,
-            self::MAKE_MIDDLEWARE,
-            self::MAKE_JOB,
-            self::MAKE_EVENT,
-            self::MAKE_LISTENER,
-            self::MAKE_COMMAND
-        ];
+    public function commandRequiredArguments() : array {
+        return self::commandsRequiredArguments()[$this->value];
+    }
 
-        return in_array($enum, $required);
+
+    public static function commandsOptionalArguments() : array {
+        return [
+            self::MAKE_MODEL->value => [
+            ],
+            self::MAKE_MIGRATION->value => [
+            ],
+            self::MAKE_SEEDER->value => [
+            ],
+            self::MAKE_FACTORY->value => [
+            ],
+            self::MAKE_CONTROLLER->value => [
+            ],
+            self::MAKE_REQUEST->value => [
+            ],
+            self::MAKE_MIDDLEWARE->value => [
+            ],
+            self::MAKE_JOB->value => [
+            ],
+            self::MAKE_EVENT->value => [
+            ],
+            self::MAKE_LISTENER->value => [
+            ],
+            self::MAKE_COMMAND->value => [
+            ],
+
+            self::GIT_PUSH->value => [],
+
+            self::GIT_ADD->value => [],
+
+            self::GIT_COMMIT->value => [
+            ],
+
+            self::GIT_RESET->value => [],
+
+            self::GIT_STASH->value => [],
+
+            self::GIT_APPLY->value => [],
+
+            self::GIT_PULL->value => [],
+        ];
+    }
+
+    public function commandOptionalArguments() : array {
+        return self::commandsOptionalArguments()[$this->value];
     }
 
 }

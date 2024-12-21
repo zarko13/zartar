@@ -6,6 +6,7 @@ use App\Repositories\ServiceResponse;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Str;
 
 class GitService
 {
@@ -58,7 +59,66 @@ class GitService
         try {
 
             $result = Process::run('git push');
+            if($result->failed()){
+                $branch = self::branch()->returnOrFail()->data['branch'];
+                $result = Process::run('git push -u origin ' . $branch);
+            }
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
+        
+        } catch (Exception $error){
+            $errors[] = 'Failed to detect branch';
+            Log::error('Failed to detect branch.Error:'.$error);
+            
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+    public static function showBranches(){
+
+        $errors = null;
+        $data = [];
+        
+
+        try {
+
+            $branches = self::branches()->returnOrFail()->data['branches'];
+
+            $data['branches'] = $branches;
+        
+        } catch (Exception $error){
+            $errors[] = 'Failed to detect branch';
+            Log::error('Failed to detect branch.Error:'.$error);
+            
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+    public static function branches(){
+
+        $errors = null;
+        $data = [];
+        $branches = [];
+        $currentBranch = null;
+
+        try {
+
+            $rawBranches = preg_split("/\r\n|\n|\r/", Process::run('git branch')->output());
+            foreach ($rawBranches as $name) {
+                $trimmedName = trim($name);
+                if($trimmedName){
+                    $parts = explode(' ', $trimmedName);
+                    $branches[] = count($parts) > 1 ? $parts[1] : $parts[0];
+                    $currentBranch = count($parts) > 1 ? $parts[1] : $currentBranch;
+                }
+            }
+
+
+            $data['branches'] = $branches;
+            $data['current_branch'] = $currentBranch;
         
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
@@ -77,11 +137,9 @@ class GitService
 
         try {
 
-            $branch = Process::run('git branch')->output();
-
-
-
-            $data['message'] = 'Your current branch is:' . $branch;
+            $branch = self::branches()->returnOrFail()->data['current_branch'];
+            
+            $data['branch'] = $branch;
         
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';

@@ -284,9 +284,7 @@ class GitService
         try {
 
             self::add()->returnOrFail();
-
-            $commitMessage = fake()->sentence(); 
-            self::commit($commitMessage)->returnOrFail();
+            self::commit(fake()->sentence())->returnOrFail();
             self::push()->returnOrFail();
         
         } catch (Exception $error){

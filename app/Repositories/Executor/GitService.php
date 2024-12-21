@@ -81,7 +81,7 @@ class GitService
         try {
 
             
-            $result = Process::run('git commit -m "{$message}"');
+            $result = Process::run('git commit -m "' . $message . '"');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
         
         } catch (Exception $error){

@@ -62,6 +62,8 @@ class GitService
             if($result->failed()){
                 $branch = self::branch()->returnOrFail()->data['branch'];
                 $result = Process::run('git push -u origin ' . $branch);
+
+                
             }
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
         

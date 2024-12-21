@@ -58,7 +58,6 @@ class GitService
         $data = [];
 
         try {
-
             
             $result = Process::run('git add .');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();

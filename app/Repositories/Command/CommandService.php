@@ -10,61 +10,97 @@ use Illuminate\Support\Facades\Process;
 
 class CommandService
 {
-    public static function executeCommand($command){
+    public static function processCommand($command){
 
         $errors = null;
         $data = [];
         try {
 
             $fedUpResponse = self::checkIsFedUp()->returnOrFail();
-            $isFedUp = $fedUpResponse->data['is_fed_up'];
-            if($isFedUp){
-            }
-            $speakMessage = $fedUpResponse->data['speak_message'];
-            $textMessage = $fedUpResponse->data['text_message'];
-            if(!$speakMessage || !$textMessage){
-
-                $similarityResponse = self::calculateSimilaritiesAlt($command)->returnOrFail();
-
-                $exactCommand = $similarityResponse->data['exact_command'];
-                $didYouMeanCommands = $similarityResponse->data['did_you_mean_commands'];
-
-                if($didYouMeanCommands){
-                    $speakMessage = $didYouMeanCommands;
-                    $textMessage = $didYouMeanCommands;
-                }
-
-                if($exactCommand){
-
-                    if(count($exactCommand->commandRequiredArguments())){
-                        $speakMessage = $exactCommand->commandRequiredArguments()[0]['label'];
-                        $textMessage = $exactCommand->commandRequiredArguments()[0]['label'];
-                    }
-
-
-                    if(!$speakMessage){
-                        switch ($command) {
-                            case 'value':
-                                # code...
-                                break;
-
-                            default:
-                                # code...
-                                break;
-                        }
-                    }
-                }
-
+            if($fedUpResponse->data['is_fed_up']){
+                return $fedUpResponse;
             }
 
+            $similarityResponse = self::calculateSimilaritiesAlt($command)->returnOrFail();
+            if($similarityResponse->data['args_mode']){
+                return $similarityResponse;
+            }
+            
+            $executeResponse = self::executeCommand($similarityResponse->data['exact_command'])->returnOrFail();
 
 
-            $data['speak_message'] = $speakMessage;
-            $data['text_message'] = $textMessage;
+
+            $data = $executeResponse->data;
 
         } catch (Exception $error){
-            Log::error('Failed to execute command.Error:'.$error);
+            Log::error('Failed to process command.Error:'.$error);
             $errors[] = self::getRandomMessage('fail')->returnOrFail()->data['message'];
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+    public static function executeCommand($command, ... $args){
+
+        $errors = null;
+        $data = [];
+        try {
+            switch ($command) {
+                case Command::MAKE_MODEL:
+                    break;
+                case Command::MAKE_MIGRATION:
+                    break;
+                case Command::MAKE_SEEDER:
+                    break;
+                case Command::MAKE_FACTORY:
+                    break;
+                case Command::MAKE_CONTROLLER:
+                    break;
+                case Command::MAKE_REQUEST:
+                    break;
+                case Command::MAKE_MIDDLEWARE:
+                    break;
+                case Command::MAKE_JOB:
+                    break;
+                case Command::MAKE_EVENT:
+                    break;
+                case Command::MAKE_LISTENER:
+                    break;
+                case Command::MAKE_COMMAND:
+                    break;
+                case Command::GIT_PUSH:
+                    break;
+                case Command::GIT_ADD:
+                    break;
+                case Command::GIT_COMMIT:
+                    break;
+                case Command::GIT_BRANCH:
+                    break;
+                case Command::GIT_CHECKOUT:
+                    break;
+                case Command::GIT_RESET:
+                    break;
+                case Command::GIT_STASH:
+                    break;
+                case Command::GIT_APPLY:
+                    break;
+                case Command::GIT_PULL:
+                    break;
+            
+                default:
+                    # code...
+                    break;
+            }
+
+           
+
+            $data['speak_message'] = null;
+
+        } catch (Exception $error){
+             $errors[] = self::getRandomMessage('fail')->returnOrFail()->data['message'];
+            Log::error('Failed to execute command.Error:'.$error);
+          
         }
 
         return new ServiceResponse($errors, $data);
@@ -81,7 +117,6 @@ class CommandService
             $message = shell_exec('cd ' . base_path() . ' && php artisan inspire');
 
             $data['speak_message'] = $message;
-            $data['text_message'] = $message;
 
         } catch (Exception $error){
             Log::error('Failed to execute inspire.Error:'.$error);
@@ -100,11 +135,11 @@ class CommandService
         $data = [];
         try {
 
-            $message = rand(1, 10) == 1 ? self::getRandomMessage('fed_up')->data['message'] : null;
+            $message = rand(1, 100) == 1 ? self::getRandomMessage('fed_up')->data['message'] : null;
 
             $data['speak_message'] = $message;
-            $data['text_message'] = $message;
             $data['is_fed_up'] = $message ? true : false;
+            $data['args_mode'] = false;
 
         } catch (Exception $error){
             Log::error('Failed to check is fed up.Error:'.$error);
@@ -207,6 +242,7 @@ class CommandService
 
             $didYouMean = !$exactCommand && count($didYouMeanCommands) ? 'Did you mean one of these:' . implode(',', $didYouMeanCommands) : null;
 
+            $data['args_mode'] = $exactCommand && count($exactCommand->commandRequiredArguments());
             $data['exact_command'] = $exactCommand;
             $data['did_you_mean_commands'] = $didYouMean;
 

@@ -16,7 +16,7 @@ class PublicController extends BaseController
         $input = $request->input();
         $command = $input['command'];
 
-        $response = CommandService::executeCommand($command);
+        $response = CommandService::processCommand($command);
 
         return $response->toAsyncResponse();
 

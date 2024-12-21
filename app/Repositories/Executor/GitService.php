@@ -6,6 +6,7 @@ use App\Repositories\ServiceResponse;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Str;
 
 class GitService
 {
@@ -204,6 +205,28 @@ class GitService
 
             $result = Process::run('git pull');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
+        
+        } catch (Exception $error){
+            $errors[] = 'Failed to detect branch';
+            Log::error('Failed to detect branch.Error:'.$error);
+            
+        }
+
+        return new ServiceResponse($errors, $data);
+
+    }
+
+
+    public static function dummyPush(){
+
+        $errors = null;
+        $data = [];
+
+        try {
+
+            self::add()->returnOrFail();
+            self::commit(fake()->sentence())->returnOrFail();
+            self::push()->returnOrFail();
         
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';

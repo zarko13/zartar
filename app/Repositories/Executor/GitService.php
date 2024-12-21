@@ -39,9 +39,8 @@ class GitService
 
         try {
 
-            $res = Process::run('git push');
-            dd($res->errorOutput());
-            $data['message'] = $res;
+            $result = Process::run('git push');
+            $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
         
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
@@ -60,9 +59,9 @@ class GitService
 
         try {
 
-            $output = Process::run('git add .')->output();
-
-            $data['message'] = $output;
+            
+            $result = Process::run('git add .');
+            $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
         
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
@@ -81,11 +80,8 @@ class GitService
 
         try {
 
-            $output = Process::run('git commit -m ' . $message)->output();
-
-
-
-            $data['message'] = $output;
+            $result = Process::run("git commit -m '{$message}'");
+            $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
         
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';

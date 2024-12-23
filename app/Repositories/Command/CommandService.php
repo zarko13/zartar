@@ -25,10 +25,11 @@ class CommandService
             if($similarityResponse->data['args_mode']){
                 return $similarityResponse;
             }
-            
+
             $executeResponse = self::executeCommand($similarityResponse->data['exact_command'])->returnOrFail();
 
 
+            $a = 3;
 
             $data = $executeResponse->data;
 
@@ -87,20 +88,20 @@ class CommandService
                     break;
                 case Command::GIT_PULL:
                     break;
-            
+
                 default:
                     # code...
                     break;
             }
 
-           
+
 
             $data['speak_message'] = null;
 
         } catch (Exception $error){
              $errors[] = self::getRandomMessage('fail')->returnOrFail()->data['message'];
             Log::error('Failed to execute command.Error:'.$error);
-          
+
         }
 
         return new ServiceResponse($errors, $data);

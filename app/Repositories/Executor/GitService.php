@@ -16,14 +16,14 @@ class GitService
         $data = [];
 
         try {
-            
+
             $result = Process::run('git add .');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -37,14 +37,14 @@ class GitService
 
         try {
 
-            
+
             $result = Process::run('git commit -m "' . $message . '"');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -63,14 +63,14 @@ class GitService
                 $branch = self::branch()->returnOrFail()->data['branch'];
                 $result = Process::run('git push -u origin ' . $branch);
 
-                
+
             }
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -81,18 +81,18 @@ class GitService
 
         $errors = null;
         $data = [];
-        
+
 
         try {
 
             $branches = self::branches()->returnOrFail()->data['branches'];
 
             $data['branches'] = $branches;
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -121,11 +121,11 @@ class GitService
 
             $data['branches'] = $branches;
             $data['current_branch'] = $currentBranch;
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -140,13 +140,13 @@ class GitService
         try {
 
             $branch = self::branches()->returnOrFail()->data['current_branch'];
-            
+
             $data['branch'] = $branch;
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -162,17 +162,17 @@ class GitService
 
             $result = Process::run('git checkout ' . $branch);
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
 
     }
-    
+
     public static function reset(){
 
         $errors = null;
@@ -182,11 +182,11 @@ class GitService
 
             $result = Process::run('git reset --hard');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -202,11 +202,11 @@ class GitService
 
             $result = Process::run('git stash');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -222,11 +222,11 @@ class GitService
 
             $result = Process::run('git stash apply');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -243,11 +243,11 @@ class GitService
 
             $result = Process::run('git pull');
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -264,11 +264,11 @@ class GitService
 
             $result = Process::run('git checkout -b ' . $branch);
             $data['message'] = $result->successful() ? $result->errorOutput() : $result->output();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
@@ -283,18 +283,21 @@ class GitService
 
         try {
 
+
+            
+
             self::add()->returnOrFail();
             self::commit(fake()->sentence())->returnOrFail();
             self::push()->returnOrFail();
-        
+
         } catch (Exception $error){
             $errors[] = 'Failed to detect branch';
             Log::error('Failed to detect branch.Error:'.$error);
-            
+
         }
 
         return new ServiceResponse($errors, $data);
 
     }
-   
+
 }

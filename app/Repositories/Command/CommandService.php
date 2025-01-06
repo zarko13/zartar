@@ -16,6 +16,8 @@ class CommandService
         $data = [];
         try {
 
+            $command = str_replace('.','',$command);
+
             $fedUpResponse = self::checkIsFedUp()->returnOrFail();
             if($fedUpResponse->data['is_fed_up']){
                 return $fedUpResponse;
@@ -201,6 +203,8 @@ class CommandService
                 }
             }
 
+
+            Log::info($similarities);
 
             $data['similarities'] = $similarities;
             $data['most_similar'] = $mostSimilar;

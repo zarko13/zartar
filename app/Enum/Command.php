@@ -7,6 +7,8 @@ enum Command : string
     case MAKE_MODEL = 'make model';
     case MAKE_MIGRATION = 'make migration';
     case MAKE_SEEDER = 'make seeder';
+    case MAKE_CEDAR = 'make cedar';
+    case MAKE_CIDER = 'make cider';
     case MAKE_FACTORY = 'make factory';
     case MAKE_CONTROLLER = 'make controller';
     case MAKE_REQUEST = 'make request';
@@ -169,4 +171,9 @@ enum Command : string
         return self::commandsOptionalArguments()[$this->value];
     }
 
+    case SHOW_CURRENT_WORKING_DIRECTORY = 'current directory';
+    case LIST_FILES = 'list files';
+    case SHOW_FILES = 'show files';
+    case RENAME_FILE = 'rename file';
+    case REMOVE_FILES = 'remove files';
 }

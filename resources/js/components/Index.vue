@@ -1,5 +1,5 @@
 <template>
-    <div class="flex flex-row">
+    <div class="flex flex-row" style="height:100%;">
         <div class="basis-1/2">
             <div class="panel">
                 <div class="nameplate">ZarTar</div>
@@ -11,14 +11,14 @@
                 </div>
             </div>
         </div>
-        <div class="basis-1/2 max-h-[50px]" style="overflow: scroll;">
-            <div class="flex items-start gap-2.5">
-                <div class="flex z-100 flex-col w-full max-w-[640px] leading-1.5 p-4 border-gray-200 bg-blue-100 dark:bg-gray-700">
-                    <div v-for="message in conversation" class="flex items-center space-x-2 rtl:space-x-reverse">
+        <div class="basis-1/2 h-full" style="height:100%; overflow-y: scroll;">
+            <div class="flex gap-2.5" style="height:100%;">
+                <div class="flex flex-col w-full max-w-[640px] max-h-[100%] leading-1.5 p-4 border-gray-200 dark:bg-gray-700" style="height:100%;">
+                    <div v-for="message in conversation" class="flex space-x-2 rtl:space-x-reverse" :class="message.is_user ? 'justify-end':''">
                         <span class="text-sm font-semibold text-gray-900 dark:text-white">
                             {{message.is_user ? 'You:' : 'ZarTar:' }}
-                            <div class="flex">
-                                <div class="bg-blue-200 text-black p-2 rounded-lg max-w-xs" :class="message.is_user ? 'justify-end' : ''">{{message.text}}
+                            <div>
+                                <div :class="message.is_user ? 'bg-gray-100 border-gray-300 justify-end':'bg-blue-200'" class="text-black p-2 rounded-lg max-w-xs">{{message.text}}
                                 </div>
                             </div>
                         </span>

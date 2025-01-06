@@ -27,7 +27,7 @@ class Test extends Command
     public function handle()
     {
 
-        $input = "!please mak:e me a new ceeder.?";
+        $input = "i want to make a new cedar.";
 
 
         $result = CommandService::calculateSimilaritiesAlt($input)->returnOrFail();
